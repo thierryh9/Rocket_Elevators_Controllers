@@ -1,33 +1,72 @@
-SET nbFloors to 10
-SET nbShafts to 1
-SET nbElevators to 2
+
+SEQUENCE settings
+    SET battery TO 1 column
+        FOR EACH column
+            SET elevators to 2
+                FOR EACH elevator
+                    INIT floorsID
+
+            SET openDoor
+            SET closeDoor
+            SET weightMax
+    END FOR
+            SET elevatorFloor TO 3
+            SET floorAmount TO 10
+            SET weightMax TO 1800kg
+            SET elevatorStatus TO idle
+
+END SEQUENCE
+
+
+
 
 
 
 SEQUENCE findBestElevator USING currentFloor AND direction
 
-    WHILE Elevator IS not found
-        FOR EACH Elevator in elevators
-            IF floor EQUALS currentFloor AND IS stopped AND Direction EQUALS requestDirection THEN
-                RETURN Elevator
+    WHILE bestElevator IS not found
+        FOR EACH Elevator in column
+            IF currentFloor EQUALS elevatorPosition AND is idle THEN
+                RETURN bestElevator
+            ELSE IF elevatorStatus is active AND currentFloor is BIGGER OR EQUAL TO elevatorPosition AND direction is up THEN
+                RETURN bestElevator
+            ELSE IF elevatorStatus is idle AND currentFloor is LESSER OR EQUAL to elevatorPosition THEN
+                RETURN bestElevator
+            ELSE IF elevatorStatus is idle AND currentFloor is NOT EQUAL to elevatorPosition AND currentFloor THEN
+                CALCULATE absolute difference between elevatorPosition and currentFloor
+                    COMPUTE the lowest gap
+                        GET Elevator computed
+                RETURN bestElevator
+            END IF
+        END FOR
+    END WHILE
+    
+    SET bestElevator TO elevator RETURNING elevator
+
+END SEQUENCE
+    
             
             
 
-END SEQUENCE
+
 
 SEQUENCE moveElevator USING requestedFloor
     IF CurrentFloor is LESS than requestedFloor THEN 
 		SET Direction TO Up
+        INCREMENT floor by 1
+        STOP at requestedFloor
 	ELSE
 		SET Direction TO Down
-	END IF
+        DECREMENT floor by 1 
+        STOP at requestedFloor
+    END IF
 	
-    SET Status TO Moving
-	    moveElevator TO requestedFloor 
+    SET elevatorStatus TO active
+	
 END SEQUENCE
 
-SEQUENCE OpenDoor USING Elevator
-	WAIT UNTIL Elevator status IS Stopped OR Idle 
+SEQUENCE OpenDoor USING requestedFloor
+	WAIT UNTIL Elevator elevatorStatus IS stopped OR idle on requestedFloor
 	INIT open Door
     INIT Timer TO 5 Seconds 
 	WHILE Timer is GREATER than 0 Second OR Door IS Obstructed OR LoadError IS 2
@@ -44,7 +83,7 @@ SEQUENCE closeDoor USING Elevator
 			Call OpenDoor WITH Elevator
 	END WHILE
 	IF door IS closed THEN
-		SET Elevator status TO Idle 
+		SET Elevator elevatorStatus TO Idle 
 		INIT IdleTimer TO 30 Seconds
 	END IF 
 END SEQUENCE
