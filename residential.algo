@@ -1,1 +1,69 @@
-SEQUENCE
+SET nbFloors to 10
+SET nbShafts to 1
+SET nbElevators to 2
+
+
+
+SEQUENCE findBestElevator USING currentFloor AND direction
+
+    WHILE Elevator IS not found
+        FOR EACH Elevator in elevators
+            IF floor EQUALS currentFloor AND IS stopped AND Direction EQUALS requestDirection THEN
+                RETURN Elevator
+            
+            
+
+END SEQUENCE
+
+SEQUENCE moveElevator USING requestedFloor
+    IF CurrentFloor is LESS than requestedFloor THEN 
+		SET Direction TO Up
+	ELSE
+		SET Direction TO Down
+	END IF
+	
+    SET Status TO Moving
+	    moveElevator TO requestedFloor 
+END SEQUENCE
+
+SEQUENCE OpenDoor USING Elevator
+	WAIT UNTIL Elevator status IS Stopped OR Idle 
+	INIT open Door
+    INIT Timer TO 5 Seconds 
+	WHILE Timer is GREATER than 0 Second OR Door IS Obstructed OR LoadError IS 2
+		KEEP Door Opened
+	END WHILE 
+	CALL closeDoor WITH Elevator
+END SEQUENCE
+
+
+SEQUENCE closeDoor USING Elevator
+	INIT close Door
+	WHILE Door IS Closing 
+		IF Obstructed THEN
+			Call OpenDoor WITH Elevator
+	END WHILE
+	IF door IS closed THEN
+		SET Elevator status TO Idle 
+		INIT IdleTimer TO 30 Seconds
+	END IF 
+END SEQUENCE
+
+
+SEQUENCE requestElevator USING currentFloor AND direction
+    CALL findBestElevator WITH currentFloor AND direction
+    CALL moveElevator
+    CALL openDoors
+END SEQUENCE
+
+SEQUENCE requestFloor USING requestedFloor
+    CALL closeDoors
+    CALL moveElevator
+    CALL openDoors
+END SEQUENCE
+
+
+
+//Scenario 1
+CALL requestElevator WITH 3 and down
+
