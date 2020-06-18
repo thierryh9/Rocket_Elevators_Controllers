@@ -1,5 +1,5 @@
 
-SEQUENCE settings
+SEQUENCE elevator
     SET battery TO 1 column
         FOR EACH column
             SET elevators to 2
@@ -10,6 +10,7 @@ SEQUENCE settings
             SET closeDoor
             SET weightMax
     END FOR
+            SET queue TO empty
             SET elevatorFloor TO 3
             SET floorAmount TO 10
             SET weightMax TO 1800kg
@@ -17,8 +18,21 @@ SEQUENCE settings
 
 END SEQUENCE
 
+SEQUENCE addToQueue USING elevator AND requestedFloor
+    IF requestedFloor is NOT EQUAL to requestedFloor THEN
+        ADD requestedFloor to queue
+    ENDIF
+END SEQUENCE
 
-
+SEQUENCE sortQueue USING floorList AND direction
+    COMPUTE requestedFloor added TO queue
+        IF direction is up THEN
+            SORT in ascending order
+        ELSE IF direction is down THEN
+            SORT in descending order
+    ENDIF
+        RETURN sortedQueue
+END SEQUENCE 
 
 
 
@@ -30,14 +44,14 @@ SEQUENCE findBestElevator USING currentFloor AND direction
                 RETURN bestElevator
             ELSE IF elevatorStatus is active AND currentFloor is BIGGER OR EQUAL TO elevatorPosition AND direction is up THEN
                 RETURN bestElevator
-            ELSE IF elevatorStatus is idle AND currentFloor is LESSER OR EQUAL to elevatorPosition THEN
+            ELSE IF elevatorStatus is active AND currentFloor is LESSER OR EQUAL to elevatorPosition AND direction is down THEN
                 RETURN bestElevator
-            ELSE IF elevatorStatus is idle AND currentFloor is NOT EQUAL to elevatorPosition AND currentFloor THEN
+            ELSE IF elevatorStatus is idle AND currentFloor is NOT EQUAL to elevatorPosition THEN
                 CALCULATE absolute difference between elevatorPosition and currentFloor
                     COMPUTE the lowest gap
                         GET Elevator computed
                 RETURN bestElevator
-            END IF
+            ENDIF
         END FOR
     END WHILE
     
@@ -45,34 +59,27 @@ SEQUENCE findBestElevator USING currentFloor AND direction
 
 END SEQUENCE
     
-            
-            
-
-
 
 SEQUENCE moveElevator USING requestedFloor
-    IF CurrentFloor is LESS than requestedFloor THEN 
-		SET Direction TO Up
-        INCREMENT floor by 1
-        STOP at requestedFloor
-	ELSE
-		SET Direction TO Down
-        DECREMENT floor by 1 
-        STOP at requestedFloor
+    REPEAT
+        IF currentFloor is LESS than requestedFloor THEN 
+		    SET Direction TO Up
+                INCREMENT floor by 1
+	    ELSE
+		    SET Direction TO Down
+                DECREMENT floor by 1      
     END IF
-	
-    SET elevatorStatus TO active
+	    UNTIL currentFloor EQUALS requestedFloor
 	
 END SEQUENCE
 
 SEQUENCE OpenDoor USING requestedFloor
-	WAIT UNTIL Elevator elevatorStatus IS stopped OR idle on requestedFloor
+	WAIT UNTIL elevatorStatus IS stopped OR idle on requestedFloor
 	INIT open Door
     INIT Timer TO 5 Seconds 
 	WHILE Timer is GREATER than 0 Second OR Door IS Obstructed OR LoadError IS 2
 		KEEP Door Opened
 	END WHILE 
-	CALL closeDoor WITH Elevator
 END SEQUENCE
 
 
@@ -84,20 +91,21 @@ SEQUENCE closeDoor USING Elevator
 	END WHILE
 	IF door IS closed THEN
 		SET Elevator elevatorStatus TO Idle 
-		INIT IdleTimer TO 30 Seconds
+		INIT idleTimer TO 30 Seconds
 	END IF 
 END SEQUENCE
 
 
 SEQUENCE requestElevator USING currentFloor AND direction
-    CALL findBestElevator WITH currentFloor AND direction
-    CALL moveElevator
+    CALL findBestElevator WITH currentFloor AND direction RETURNING elevator
+    CALL moveElevator WITH bestElevator RETURNING   queue
     CALL openDoors
 END SEQUENCE
 
-SEQUENCE requestFloor USING requestedFloor
+SEQUENCE requestFloor USING requestedFloor AND direction
     CALL closeDoors
-    CALL moveElevator
+    CALL addToQueue WITH queue and requestedFloor
+    CALL moveElevator WITH elevator
     CALL openDoors
 END SEQUENCE
 
