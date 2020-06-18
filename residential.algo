@@ -18,12 +18,13 @@ SEQUENCE elevator
 
 END SEQUENCE
 
+'using a queue to list the floors'
 SEQUENCE addToQueue USING elevator AND requestedFloor
     IF requestedFloor is NOT EQUAL to requestedFloor THEN
         ADD requestedFloor to queue
     ENDIF
 END SEQUENCE
-
+'sorting the floors in priority and order'
 SEQUENCE sortQueue USING queue AND direction
     COMPUTE requestedFloor added TO queue
         IF direction is up THEN
@@ -35,7 +36,7 @@ SEQUENCE sortQueue USING queue AND direction
 END SEQUENCE 
 
 
-
+'trying to get the best elevator possibly the most efficient way possible'
 SEQUENCE findBestElevator USING currentFloor AND direction
 
     WHILE bestElevator IS not found
@@ -59,7 +60,7 @@ SEQUENCE findBestElevator USING currentFloor AND direction
 
 END SEQUENCE
     
-
+'simply moving the machine'
 SEQUENCE moveElevator USING elevator
     REPEAT
         IF currentFloor is LESS than requestedFloor THEN
@@ -77,7 +78,7 @@ SEQUENCE moveElevator USING elevator
     
 	
 END SEQUENCE
-
+'opening door using a timer to make sure it does not close super fast'
 SEQUENCE OpenDoor USING requestedFloor
 	WAIT UNTIL elevatorStatus IS stopped OR idle on requestedFloor
 	INIT open Door
@@ -100,7 +101,7 @@ SEQUENCE closeDoor USING Elevator
 	END IF 
 END SEQUENCE
 
-
+'main functions of the controller'
 SEQUENCE requestElevator USING currentFloor AND direction
     CALL findBestElevator WITH currentFloor AND direction RETURNING elevator
     CALL moveElevator WITH queue RETURNING bestElevator
