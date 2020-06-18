@@ -4,7 +4,7 @@ SEQUENCE elevator
         FOR EACH column
             SET elevators to 2
                 FOR EACH elevator
-                    INIT floorsID
+                    INIT floorsID '1 to 10'
 
             SET openDoor
             SET closeDoor
@@ -24,7 +24,7 @@ SEQUENCE addToQueue USING elevator AND requestedFloor
     ENDIF
 END SEQUENCE
 
-SEQUENCE sortQueue USING floorList AND direction
+SEQUENCE sortQueue USING queue AND direction
     COMPUTE requestedFloor added TO queue
         IF direction is up THEN
             SORT in ascending order
@@ -60,16 +60,21 @@ SEQUENCE findBestElevator USING currentFloor AND direction
 END SEQUENCE
     
 
-SEQUENCE moveElevator USING requestedFloor
+SEQUENCE moveElevator USING elevator
     REPEAT
-        IF currentFloor is LESS than requestedFloor THEN 
+        IF currentFloor is LESS than requestedFloor THEN
+            SET elevatorStatus TO active
 		    SET Direction TO Up
                 INCREMENT floor by 1
 	    ELSE
+            SET elevatorStatus TO active
 		    SET Direction TO Down
                 DECREMENT floor by 1      
     END IF
-	    UNTIL currentFloor EQUALS requestedFloor
+	    UNTIL currentFloor EQUALS requestedFloor THEN
+            CALL openDoor
+    
+    
 	
 END SEQUENCE
 
@@ -98,12 +103,13 @@ END SEQUENCE
 
 SEQUENCE requestElevator USING currentFloor AND direction
     CALL findBestElevator WITH currentFloor AND direction RETURNING elevator
-    CALL moveElevator WITH bestElevator RETURNING   queue
+    CALL moveElevator WITH queue RETURNING bestElevator
     CALL openDoors
 END SEQUENCE
 
 SEQUENCE requestFloor USING requestedFloor AND direction
     CALL closeDoors
+    CALL findBestElevator WITH elevator
     CALL addToQueue WITH queue and requestedFloor
     CALL moveElevator WITH elevator
     CALL openDoors
