@@ -82,7 +82,7 @@ SEQUENCE OpenDoor USING requestedFloor
 	WAIT UNTIL elevatorStatus IS stopped OR idle on requestedFloor
 	INIT open Door
     INIT Timer TO 5 Seconds 
-	WHILE Timer is GREATER than 0 Second OR Door IS Obstructed OR LoadError IS 2
+	WHILE Timer is GREATER than 0 Second OR Door IS Obstructed OR Weight IS GREATER than weightMax
 		KEEP Door Opened
 	END WHILE 
 END SEQUENCE
