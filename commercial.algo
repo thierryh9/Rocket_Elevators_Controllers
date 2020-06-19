@@ -6,7 +6,8 @@ SEQUENCE elevator
                 FOR EACH elevator in column
                     SET floorsID to -6 to 60 'listed queue for each elevator per column'
                     CALL floorsPerColumn WITH battery AND floorAmount RETURNING correspondingColumn 'using this only for commercial use'
-
+            SET elevatorScreen DISPLAY currentFloor AND alert
+            SET outsideScreen DISPLAY floorsID AND alert
             SET openDoor
             SET closeDoor
             SET weightMax
@@ -100,6 +101,12 @@ END SEQUENCE
     
                                             'MOVEMENT'
 SEQUENCE moveElevator USING elevator
+    IF weightMax IS BIGGER OR EQUAL TO weightMax
+        SET alert to Max capacity reached WITH elevatorScreen THEN
+        SET elevatorStatus TO stopped
+        CALL openDoor
+    ENDIF
+    
     SET elevatorStatus TO active
         FOR EACH 
             CALL floorQueue WITH elevator
