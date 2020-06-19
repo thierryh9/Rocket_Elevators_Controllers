@@ -2,38 +2,27 @@ SEQUENCE elevator
     SET battery TO 4 column
         FOR EACH column
             SET elevators to 3
-
+            CALL calcFloorsPerColumn WITH battery and floorAmount
+            CALL floorAssigned WITH battery and floorAmount
+                SET floorAssigned
                 FOR EACH elevator in column
-                    SET floorsID to -6 to 60 'listed queue for each elevator per column'
-                    CALL floorsPerColumn WITH battery AND floorAmount RETURNING correspondingColumn 'using this only for commercial use'
+                    SET floorsID to 0 to 59 'listed queue for each elevator per column'
+                    SET basementFloorsID to 0 to 6
             SET elevatorScreen DISPLAY currentFloor AND alert
             SET outsideScreen DISPLAY floorsID AND alert
             SET openDoor
             SET closeDoor
             SET weightMax
-            SET floorQueue TO empty
-    END FOR
-            
-            SET elevatorFloor TO 3
-            SET floorAmount TO 10
-            SET weightMax TO 1800kg
+            SET floorQueue TO empty          
+            SET Lobby FROM floorsID TO 0
+            SET floorAmount TO 60
+            SET basementAmount TO 6
             SET elevatorStatus TO idle
+        END FOR
     END FOR
 
-END SEQUENCE
-                            'Settings for more columns'
-SEQUENCE floorsPerColumn USING battery AND floorAmount
-    SET columnA to floorsID FROM -6 to 1
-    SET columnB to floorsID FROM 1 to 21
-    SET columnC to floorsID FROM 21 to 41
-    SET columnD to floorsID FROM 41 to 60
 
 END SEQUENCE
-
-SEQUENCE findBestColumn USING floorsID AND floorsPerColumn AND requestedFloor
-    FOR EACH column
-        IF floorsID selected with requestedFloor is a floor in any column
-        RETURN BestColumn 
 
                                'MAIN FUNCTIONS OF THE CONTROLLER'
 SEQUENCE requestElevator USING currentFloor AND direction
@@ -52,8 +41,36 @@ SEQUENCE requestFloor USING requestedFloor AND direction
     CALL openDoors
 END SEQUENCE
 
+                            'Settings for more columns'
+SEQUENCE calcFloorsPerColumn USING battery AND floorAmount
+    'using the first column to calculate'
+    SET columnA WITH basementfloorsID FROM 0 TO 6
+        CALCULATE totalColumns MINUS 1 EQUALS remainColumns
+        'gives us the average floor per column'
+        CALCULATE floorAmount DIVIDED by remainColumns EQUALS floorsRemainColumns 
+        RETURN ROUNDED floorsRemainColumns 
+
+SEQUENCE floorAssigned
+        SET floorsPerColumn
+        SET range TO 0 
+            FOR EACH column in battery
+                WHILE range is NOT EQUAL TO remainColumns
+                COMPUTE floorAssigned EQUALS (floorsRemainColumns MULTIPLIED by range PLUS 1) AND (floorsRemainColumns TIMES range PLUS 1)
+                    RETURN floorAssigned FOR column
+                    ADD 1 TO range
+            END WHILE
+        END FOR
+
+END SEQUENCE
+
+SEQUENCE findBestColumn USING floorsID AND floorsPerColumn AND requestedFloor
+    FOR EACH column
+        IF floorsID selected with requestedFloor is a floor in any column
+        RETURN BestColumn 
+        SET BestColumn TO column
+
                'trying to get the best elevator possibly the most efficient way possible'
-SEQUENCE findBestElevator USING currentFloor AND direction
+SEQUENCE findBestElevator USING currentFloor AND direction 
 
     WHILE bestElevator IS not found
         FOR EACH Elevator in column

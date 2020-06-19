@@ -101,7 +101,7 @@ SEQUENCE moveElevator USING elevator
             SET elevatorStatus TO active
             CALL openDoor WITH elevator
             REMOVE floorsID from floorQueue
-        IF currentFloor is LESS than requestedFloor THEN
+        ELSE IF currentFloor is LESS than requestedFloor THEN
             SET elevatorStatus TO active
 		    SET Direction TO Up
                 INCREMENT floor by 1
