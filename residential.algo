@@ -4,13 +4,14 @@ SEQUENCE elevator
         FOR EACH column
             SET elevators to 2
                 FOR EACH elevator
-                    INIT floorsID '1 to 10'
+                    SET floorsID 'listed queue from 1 to 10'
 
             SET openDoor
             SET closeDoor
             SET weightMax
+            SET floorQueue TO empty
     END FOR
-            SET queue TO empty
+            
             SET elevatorFloor TO 3
             SET floorAmount TO 10
             SET weightMax TO 1800kg
@@ -18,27 +19,23 @@ SEQUENCE elevator
 
 END SEQUENCE
 
-                                    'QUEUE FOR FLOORS'
-                            'using a queue to list the floors'
-SEQUENCE addToQueue USING elevator AND requestedFloor
-    IF requestedFloor is NOT EQUAL to requestedFloor THEN
-        ADD requestedFloor to queue
-    ENDIF
+                               'MAIN FUNCTIONS OF THE CONTROLLER'
+SEQUENCE requestElevator USING currentFloor AND direction
+    CALL findBestElevator WITH currentFloor AND direction RETURNING elevator
+    CALL addToFloorQueue with elevator AND floorsID RETURNING floorQueue
+    CALL moveElevator WITH elevator RETURNING bestElevator
+    CALL openDoors
 END SEQUENCE
 
-                        'sorting the floors in priority and order'
-SEQUENCE sortQueue USING queue AND direction
-    COMPUTE requestedFloor added TO queue
-        IF direction is up THEN
-            SORT in ascending order
-        ELSE IF direction is down THEN
-            SORT in descending order
-    ENDIF
-        RETURN sortedQueue
-END SEQUENCE 
+SEQUENCE requestFloor USING requestedFloor AND direction
+    CALL closeDoors
+    CALL findBestElevator WITH elevator
+    CALL addToFloorQueue WITH floorQueue and requestedFloor
+    CALL moveElevator WITH elevator
+    CALL openDoors
+END SEQUENCE
 
-
-                'trying to get the best elevator possibly the most efficient way possible'
+               'trying to get the best elevator possibly the most efficient way possible'
 SEQUENCE findBestElevator USING currentFloor AND direction
 
     WHILE bestElevator IS not found
@@ -58,34 +55,67 @@ SEQUENCE findBestElevator USING currentFloor AND direction
         END FOR
     END WHILE
     
-    SET bestElevator TO elevator RETURNING elevator
+    
+    SET bestElevator TO elevator 
+    RETURN elevator
 
 END SEQUENCE
+
+                                    'QUEUE FOR FLOORS'
+                            'using a floorQueue to list the floors'
+SEQUENCE addToFloorQueue USING elevator AND requestedFloor
+    IF requestedFloor is NOT EQUAL to requestedFloor THEN
+        ADD requestedFloor to floorQueue
+    ENDIF
+END SEQUENCE
+
+                        'sorting the floors in priority and order'
+SEQUENCE sortFloorQueue USING floorQueue AND direction
+    COMPUTE requestedFloor added TO floorQueue
+        IF direction is up THEN
+            SORT in ascending order
+        ELSE IF direction is down THEN
+            SORT in descending order
+    ENDIF
+        RETURN sortedFloorQueue
+END SEQUENCE 
+
+
+ 
     
                                             'MOVEMENT'
 SEQUENCE moveElevator USING elevator
-    REPEAT
+    SET elevatorStatus TO active
+        FOR EACH 
+            CALL floorQueue WITH elevator
+    REPEAT 
+        IF elevatorPosition is EQUAL to requestedFloor THEN
+            SET elevatorStatus TO active
+            CALL openDoor WITH elevator
+            REMOVE floorsID from floorQueue
         IF currentFloor is LESS than requestedFloor THEN
             SET elevatorStatus TO active
 		    SET Direction TO Up
                 INCREMENT floor by 1
-	    ELSE
+	    ELSE IF currentFloor is MORE than requestedFloor THEN
             SET elevatorStatus TO active
 		    SET Direction TO Down
                 DECREMENT floor by 1      
     END IF
 	    UNTIL currentFloor EQUALS requestedFloor THEN
             CALL openDoor
+            REMOVE floorsID from floorQueue
     	
 END SEQUENCE
 
 
 
                             'OPENING AND CLOSING DOORS'
-SEQUENCE OpenDoor USING requestedFloor
+SEQUENCE OpenDoor USING elevator
 	WAIT UNTIL elevatorStatus IS stopped OR idle on requestedFloor
-	INIT open Door
-    INIT Timer TO 5 Seconds 
+	SET elevatorStatus TO stopped
+    INIT open Door
+    SET Timer TO 5 Seconds 
 	WHILE Timer is GREATER than 0 Second OR Door IS Obstructed OR Weight IS GREATER than weightMax
 		KEEP Door Opened
 	END WHILE 
@@ -93,31 +123,20 @@ END SEQUENCE
 
 
 SEQUENCE closeDoor USING Elevator
-	INIT close Door
+	SET elevatorStatus TO stopped
+    INIT close Door
 	WHILE Door IS Closing 
 		IF Obstructed THEN
+            SET alert TO Door is obstructed
 			Call OpenDoor WITH Elevator
 	END WHILE
 	IF door IS closed THEN
-		SET Elevator elevatorStatus TO Idle 
+		SET Elevator elevatorStatus TO idle 
 		INIT idleTimer TO 30 Seconds
 	END IF 
 END SEQUENCE
 
-                                'MAIN FUNCTIONS OF THE CONTROLLER'
-SEQUENCE requestElevator USING currentFloor AND direction
-    CALL findBestElevator WITH currentFloor AND direction RETURNING elevator
-    CALL moveElevator WITH queue RETURNING bestElevator
-    CALL openDoors
-END SEQUENCE
-
-SEQUENCE requestFloor USING requestedFloor AND direction
-    CALL closeDoors
-    CALL findBestElevator WITH elevator
-    CALL addToQueue WITH queue and requestedFloor
-    CALL moveElevator WITH elevator
-    CALL openDoors
-END SEQUENCE
+ 
 
 
 
