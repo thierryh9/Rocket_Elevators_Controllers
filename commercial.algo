@@ -1,10 +1,11 @@
-
 SEQUENCE elevator
-    SET battery TO 1 column
+    SET battery TO 4 column
         FOR EACH column
-            SET elevators to 2
-                FOR EACH elevator
-                    SET floorsID 'listed queue from 1 to 10'
+            SET elevators to 3
+
+                FOR EACH elevator in column
+                    SET floorsID 'listed queue for each elevator per column'
+                    CALL floorsPerColumn WITH battery AND floorAmount RETURNING correspondingColumn
 
             SET openDoor
             SET closeDoor
@@ -16,9 +17,22 @@ SEQUENCE elevator
             SET floorAmount TO 10
             SET weightMax TO 1800kg
             SET elevatorStatus TO idle
-    END FOR 
+    END FOR
 
 END SEQUENCE
+
+SEQUENCE floorsPerColumn USING battery AND floorAmount
+    SET columnA to basement
+    SET columnB to floorsID FROM 1 to 21
+    SET columnC to floorsID FROM 21 to 41
+    SET columnD to floorsID FROM 41 to 60
+
+END SEQUENCE
+
+SEQUENCE findBestColumn USING floorsID AND floorsPerColumn AND requestedFloor
+    FOR EACH column
+        IF floorsID selected with requestedFloor is a floor in any column
+        RETURN BestColumn 
 
                                'MAIN FUNCTIONS OF THE CONTROLLER'
 SEQUENCE requestElevator USING currentFloor AND direction
@@ -136,11 +150,3 @@ SEQUENCE closeDoor USING Elevator
 		        INIT idleTimer TO 30 Seconds
 	END IF 
 END SEQUENCE
-
- 
-
-
-
-//Scenario 1
-CALL requestElevator WITH 3 and down
-
