@@ -5,7 +5,7 @@ SEQUENCE elevator
 
                 FOR EACH elevator in column
                     SET floorsID 'listed queue for each elevator per column'
-                    CALL floorsPerColumn WITH battery AND floorAmount RETURNING correspondingColumn
+                    CALL floorsPerColumn WITH battery AND floorAmount RETURNING correspondingColumn 'using this only for commercial use'
 
             SET openDoor
             SET closeDoor
@@ -20,7 +20,7 @@ SEQUENCE elevator
     END FOR
 
 END SEQUENCE
-
+                            'Settings for more columns'
 SEQUENCE floorsPerColumn USING battery AND floorAmount
     SET columnA to basement
     SET columnB to floorsID FROM 1 to 21
