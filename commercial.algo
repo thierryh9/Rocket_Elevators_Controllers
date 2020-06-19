@@ -132,7 +132,6 @@ SEQUENCE moveElevator USING elevator
     ENDIF
     
     SET elevatorStatus TO active
-        FOR EACH 
             CALL floorQueue WITH elevator
     REPEAT 
         IF elevatorPosition is EQUAL to requestedFloor THEN
