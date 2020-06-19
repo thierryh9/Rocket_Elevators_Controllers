@@ -34,6 +34,7 @@ SEQUENCE requestElevator USING requestFloor AND direction
     CALL findBestColumn WITH floorsPerColumn AND direction RETURNING bestColumn
     CALL findBestElevator WITH currentFloor AND direction RETURNING elevator
     CALL addToFloorQueue with elevator AND floorsID RETURNING floorQueue
+    DISPLAY "Embark in" elevator
     CALL moveElevator WITH elevator RETURNING bestElevator
     CALL openDoors
     SET timer TO 10 Seconds
