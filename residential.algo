@@ -114,6 +114,7 @@ SEQUENCE moveElevator USING elevator
 	    UNTIL currentFloor EQUALS requestedFloor THEN
             CALL openDoor
             REMOVE floorsID from floorQueue
+            REPEAT UNTIL floorQueue is Empty
     	
 END SEQUENCE
 
