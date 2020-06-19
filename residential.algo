@@ -32,7 +32,6 @@ END SEQUENCE
 
 SEQUENCE requestFloor USING requestedFloor AND direction
     CALL closeDoors
-    CALL findBestElevator WITH elevator
     CALL addToFloorQueue WITH floorQueue and requestedFloor
     CALL moveElevator WITH elevator
     CALL openDoors
