@@ -17,6 +17,7 @@ SEQUENCE elevator
             SET floorAmount TO 10
             SET weightMax TO 1800kg
             SET elevatorStatus TO idle
+         
     END FOR 
 
 END SEQUENCE
@@ -148,6 +149,5 @@ END SEQUENCE
 
 
 
-//Scenario 1
-CALL requestElevator WITH 3 and down
+
 

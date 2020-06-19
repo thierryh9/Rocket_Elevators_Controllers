@@ -12,9 +12,13 @@ SEQUENCE elevator
             SET outsideScreen DISPLAY floorsID AND alert
             SET openDoor
             SET closeDoor
-            SET weightMax
+            SET weightMax TO 1800kg
             SET floorQueue TO empty          
             SET Lobby FROM floorsID TO 0
+            SET floorsPanel TO Lobby WITH requestedFloor
+                FOR EACH value entered
+                ADD requestedFloor TO queue
+        END FOR
             SET floorAmount TO 60
             SET basementAmount TO 6
             SET elevatorStatus TO idle
@@ -24,13 +28,16 @@ SEQUENCE elevator
 
 END SEQUENCE
 
+
                                'MAIN FUNCTIONS OF THE CONTROLLER'
-SEQUENCE requestElevator USING currentFloor AND direction
+SEQUENCE requestElevator USING requestFloor AND direction
     CALL findBestColumn WITH floorsPerColumn AND direction RETURNING bestColumn
     CALL findBestElevator WITH currentFloor AND direction RETURNING elevator
     CALL addToFloorQueue with elevator AND floorsID RETURNING floorQueue
     CALL moveElevator WITH elevator RETURNING bestElevator
     CALL openDoors
+    SET timer TO 10 Seconds
+    CALL closeDoors
 END SEQUENCE
 
 SEQUENCE requestFloor USING requestedFloor AND direction
@@ -44,7 +51,7 @@ END SEQUENCE
                             'Settings for more columns'
 SEQUENCE calcFloorsPerColumn USING battery AND floorAmount
     'using the first column to calculate'
-    SET columnA WITH basementfloorsID FROM 0 TO 6
+    SET columnA TO basementfloorsID
         CALCULATE totalColumns MINUS 1 EQUALS remainColumns
         'gives us the average floor per column'
         CALCULATE floorAmount DIVIDED by remainColumns EQUALS floorsRemainColumns 
@@ -55,7 +62,7 @@ SEQUENCE floorAssigned
         SET range TO 0 
             FOR EACH column in battery
                 WHILE range is NOT EQUAL TO remainColumns
-                COMPUTE floorAssigned EQUALS (floorsRemainColumns MULTIPLIED by range PLUS 1) AND (floorsRemainColumns TIMES range PLUS 1)
+                COMPUTE floorAssigned EQUALS (floorsRemainColumns MULTIPLIED by range PLUS 1) AND (floorsRemainColumns MULTIPLIED by range PLUS 1)
                     RETURN floorAssigned FOR column
                     ADD 1 TO range
             END WHILE
