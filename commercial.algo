@@ -77,7 +77,7 @@ SEQUENCE findBestColumn USING floorsID AND floorsPerColumn AND requestedFloor
         SET BestColumn TO column
 
                'trying to get the best elevator possibly the most efficient way possible'
-SEQUENCE findBestElevator USING currentFloor AND direction 
+SEQUENCE findBestElevator USING requestedFloor AND battery 
     WHILE bestElevator IS not found
         FOR EACH Elevator in column
             IF currentFloor EQUALS elevatorPosition AND is idle THEN
