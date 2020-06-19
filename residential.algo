@@ -5,7 +5,8 @@ SEQUENCE elevator
             SET elevators to 2
                 FOR EACH elevator
                     SET floorsID 'listed queue from 1 to 10'
-
+            SET elevatorScreen DISPLAY currentFloor AND alert
+            SET outsideScreen DISPLAY floorsID AND alert
             SET openDoor
             SET closeDoor
             SET weightMax
@@ -86,6 +87,12 @@ END SEQUENCE
     
                                             'MOVEMENT'
 SEQUENCE moveElevator USING elevator
+    IF weightMax IS BIGGER OR EQUAL TO weightMax
+        SET alert to Max capacity reached WITH elevatorScreen THEN
+        SET elevatorStatus TO stopped
+        CALL openDoor
+    ENDIF
+    
     SET elevatorStatus TO active
         FOR EACH 
             CALL floorQueue WITH elevator
