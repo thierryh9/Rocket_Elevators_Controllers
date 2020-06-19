@@ -37,6 +37,7 @@ SEQUENCE findBestColumn USING floorsID AND floorsPerColumn AND requestedFloor
 
                                'MAIN FUNCTIONS OF THE CONTROLLER'
 SEQUENCE requestElevator USING currentFloor AND direction
+    CALL findBestColumn WITH floorsPerColumn AND direction RETURNING bestColumn
     CALL findBestElevator WITH currentFloor AND direction RETURNING elevator
     CALL addToFloorQueue with elevator AND floorsID RETURNING floorQueue
     CALL moveElevator WITH elevator RETURNING bestElevator
