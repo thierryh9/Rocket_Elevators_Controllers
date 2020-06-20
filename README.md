@@ -1,2 +1,1 @@
-# Rocket_Elevators_Controllers
-Residential and commercial controllers for Rocket Elevators
+Contains the algorithm files for the elevator controllers for the New Rocket Elevator Solutions for both Residential and Commercial offers
