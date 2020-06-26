@@ -42,17 +42,17 @@ SEQUENCE findBestElevator USING currentFloor AND direction
 
     WHILE bestElevator IS not found
         FOR EACH Elevator in column
-            IF currentFloor EQUALS elevatorPosition AND is idle THEN
-                RETURN bestElevator
-            ELSE IF elevatorStatus is active AND currentFloor is BIGGER OR EQUAL TO elevatorPosition AND direction is up THEN
-                RETURN bestElevator
-            ELSE IF elevatorStatus is active AND currentFloor is LESSER OR EQUAL to elevatorPosition AND direction is down THEN
-                RETURN bestElevator
-            ELSE IF elevatorStatus is idle AND currentFloor is NOT EQUAL to elevatorPosition THEN
+            IF currentFloor EQUALS elevatorPosition AND is idle 
+                
+            ELSE IF elevatorStatus is active AND currentFloor is BIGGER OR EQUAL TO elevatorPosition AND direction is up 
+                
+            ELSE IF elevatorStatus is active AND currentFloor is LESSER OR EQUAL to elevatorPosition AND direction is down 
+                
+            ELSE IF elevatorStatus is idle AND currentFloor is NOT EQUAL to elevatorPosition 
                 CALCULATE absolute difference between elevatorPosition and currentFloor
                     COMPUTE the lowest gap
                         GET Elevator computed
-                RETURN bestElevator
+                
             ENDIF
         END FOR
     END WHILE

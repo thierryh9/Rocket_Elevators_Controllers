@@ -5,20 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Attach",
-            "port": 9229,
-            "request": "attach",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "type": "pwa-node"
-        },
-        {
-            "name": "Python: Current File",
-            "type": "python",
+            "type": "node",
             "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
+            "outputCapture": "std",
+            "name": "Launch Program",
+           
+            "program": "${workspaceFolder}\\Residential_Controller.js"
         }
     ]
 }

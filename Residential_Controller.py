@@ -10,7 +10,7 @@ class Controller :
         self.nbElevator = nbElevator
         self.nbFloor = nbFloor
         self.column = Column(nbElevator, nbFloor)
-
+        
 #COLUMN WITH ELEVATOR FIND AND REQUEST FUNCTIONS      
 class Column : 
     def __init__(self, nbElevator, nbFloor):
@@ -209,16 +209,16 @@ Controller = Controller (1, 2, 10)   #1 column, 2 elevators, 10 floors
 
 Controller.column.elevatorList[0].position = 1
 Controller.column.elevatorList[0].status = "moveUp"
-Controller.column.elevatorList[0].floorList = [5]
+Controller.column.elevatorList[0].floorList = []
 Controller.column.elevatorList[1].position = 9
 Controller.column.elevatorList[1].status = "moveDown"
-Controller.column.elevatorList[1].floorList = [7]
+Controller.column.elevatorList[1].floorList = []
 
 #CALL FUNCTION
 
-Controller.column.RequestElevator(2, "up")
+Controller.column.RequestElevator(10, "down")
 
-Controller.column.bestElevator.RequestFloor(Controller.column.bestElevator, 10)
+Controller.column.bestElevator.RequestFloor(Controller.column.bestElevator, 4)
 
 
 
