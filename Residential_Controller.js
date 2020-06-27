@@ -4,20 +4,20 @@ function testController() {
     
   
         controller.column.elevatorList[0].currentFloor = 2; // set elevator 1 floor
-        controller.column.elevatorList[0].status = "moving";
+        controller.column.elevatorList[0].status = "moveUp";
         controller.column.elevatorList[0].direction = "down";
         controller.column.elevatorList[1].currentFloor = 6; // set elevator 2 floor
-        controller.column.elevatorList[1].status = "moving";
+        controller.column.elevatorList[1].status = "moveUp";
         controller.column.elevatorList[1].direction = "down";
   
         var elevator = controller.RequestElevator(5, "up");
         controller.RequestFloor(elevator, 7);
    
     //controller.column.elevatorList[0].currentFloor = 10;
-    //controller.column.elevatorList[0].status = "moving";
+    //controller.column.elevatorList[0].status = "moveUp";
     //controller.column.elevatorList[0].direction = "down";
     //controller.column.elevatorList[1].currentFloor = 3;
-    //controller.column.elevatorList[1].status = "moving";
+    //controller.column.elevatorList[1].status = "moveUp";
     //controller.column.elevatorList[1].direction = "down";
   
     var elevator = controller.RequestElevator(1, "up");
@@ -31,10 +31,10 @@ function testController() {
     
   
      //controller.column.elevatorList[0].currentFloor = 10;
-     //controller.column.elevatorList[0].status = "moving";
+     //controller.column.elevatorList[0].status = "moveUp";
      //controller.column.elevatorList[0].direction = "down";
      //controller.column.elevatorList[1].currentFloor = 3;
-     //controller.column.elevatorList[1].status = "moving";
+     //controller.column.elevatorList[1].status = "moveUp";
      //controller.column.elevatorList[1].direction = "down";
   
      console.log(controller.column.elevatorList)
@@ -48,13 +48,14 @@ function testController() {
   
     
   
-    //INIT SYSTEM
+          //BASE SETTINGS OF OUR BUILDING
   }
   function init_elevator_system(nbFloor, nbElevator) {
     var controller = new ElevatorController(nbFloor, nbElevator);
   
     return controller;
   }
+          //COLUMN WITH ELEVATOR FIND AND REQUEST FUNCTIONS 
   class Column {
     constructor(nbFloor, nbElevator) {
       this.nbFloor = nbFloor;
@@ -75,14 +76,14 @@ function testController() {
       this.direction = direction;
       this.floorList = [];
     }
-    //    ---------------Send the request to the compute list then to operate-----------------------------------------------------------------------------
+    //SEND THE REQUEST TO COMPUTE THE LIST
   
-    send_request(RequestedFloor) {
+    QueueRequest(RequestedFloor) {
       this.floorList.push(RequestedFloor);
       this.sortedQueue();
       this.moveElevator(RequestedFloor);
     }
-    //    ---------------compute list-----------------------------------------------------------------------------
+    //SORT QUEUE
   
     sortedQueue() {
       if (this.direction === "up") {
@@ -93,18 +94,18 @@ function testController() {
       }
       return this.floorList;
     }
-    //    --------------here is operate system where all the action and animation will be done-----------------------------------------------------------------------------
+    //MOVING THE SYSTEM
   
     moveElevator(RequestedFloor) {
       while (this.floorList > 0) {
-        // READ nextfloor FROM floorList COMMENT???
+        
         if (RequestedFloor === this.currentFloor) {
           this.openDoor();
-          this.status = "moving";
+          this.status = "moveUp";
   
           this.floorList.shift();
         } else if (RequestedFloor < this.currentFloor) {
-          this.status = "moving";
+          this.status = "moveUp";
           console.log("---------------------------------------------------");
           console.log("Elevator" + this.position, this.status);
           console.log("---------------------------------------------------");
@@ -118,7 +119,7 @@ function testController() {
           this.floorList.shift();
         } else if (RequestedFloor > this.currentFloor) {
           sleep(1000);
-          this.status = "moving";
+          this.status = "moveUp";
           console.log("---------------------------------------------------");
           console.log("Elevator" + this.position, this.status);
           console.log("---------------------------------------------------");
@@ -152,14 +153,13 @@ function testController() {
       sleep(1000);
       console.log("Open Door");
       console.log("---------------------------------------------------");
-      console.log("Button Light Off");
       sleep(1000);
   
       console.log("---------------------------------------------------");
       sleep(1000);
-      this.Close_door();
+      this.closeDoor();
     }
-    Close_door() {
+    closeDoor() {
       console.log("close door");
       sleep(1000);
     }
@@ -199,7 +199,7 @@ function testController() {
       console.log("Controller iniatiated");
     }
   
-    //    -------here is the request elevator where find best elevator is done----------------------------------------------------------------------------------
+    //REQUESTING THE BEST
   
     RequestElevator(FloorNumber, Direction) {
       sleep(1000);
@@ -210,8 +210,8 @@ function testController() {
       console.log("Call Button Light On");
       sleep(1000);
   
-      let elevator = this.find_best_elevator(FloorNumber, Direction);
-      elevator.send_request(FloorNumber);
+      let elevator = this.findBestElevator(FloorNumber, Direction);
+      elevator.QueueRequest(FloorNumber);
       return elevator;
     }
     //request floor
@@ -224,13 +224,13 @@ function testController() {
       console.log("---------------------------------------------------");
       console.log("Request Button Light On");
       sleep(1000);
-      elevator.send_request(RequestedFloor);
+      elevator.QueueRequest(RequestedFloor);
       // Elevator.moveElevator(RequestedFloor);
     }
     // here where the find best elevator is done
   
-    find_best_elevator(FloorNumber, Direction) {
-      console.log("find_best_elevator", FloorNumber, Direction);
+    findBestElevator(FloorNumber, Direction) {
+      console.log("findBestElevator", FloorNumber, Direction);
   
       let bestElevator = null;
       let shortest_distance = 1000;
@@ -241,7 +241,7 @@ function testController() {
           FloorNumber === elevator.currentFloor &&
           (elevator.status === "stopped" ||
             elevator.status === "idle" ||
-            elevator.status === "moving")
+            elevator.status === "moveUp")
         ) {
           return elevator;
         } else {
