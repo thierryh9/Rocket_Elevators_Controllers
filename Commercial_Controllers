@@ -5,6 +5,7 @@ import (
 	"math"
 	"sort"
 )
+
 //TESTING OUR 4 SCENARIOS AT THE BOTTOM
 func main() {
 	Scenario1()
@@ -26,7 +27,7 @@ type Elevator struct {
 	FloorList       []int
 	Door            string
 	BufferDirection string
-	ElevatorList      []int
+	ElevatorList    []int
 }
 type Column struct {
 	ID           int
@@ -373,7 +374,7 @@ func (c Battery) UpdateList(elevator Elevator, List []int, Position int) []int {
 	}
 	if check {
 		List = append(List, Position)
-		sort.Ints(List)			//sorting the list
+		sort.Ints(List) //sorting the list
 	}
 	return List
 }
