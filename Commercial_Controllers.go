@@ -422,7 +422,7 @@ func (c Battery) move(elevator Elevator) {
 			}
 			elevator.Door = "OPEN"
 			fmt.Println("Door opening...")
-			fmt.Println("Door is open")
+			fmt.Println("Door open")
 			// fmt.Print("222 current stoplist BEFORE remove: ")
 			// for i := 0; i < len(elevator.StopList); i++ {
 			// 	fmt.Print(" | ", elevator.StopList[i])
@@ -453,9 +453,9 @@ func (c Battery) move(elevator Elevator) {
 
 // Scenario 1
 func Scenario1() {
-	fmt.Println("******************* ******************* *******************")
+
 	fmt.Println("*******************      Scenario 1     *******************")
-	fmt.Println("******************* ******************* *******************")
+
 	Battery1 := battery(4, 66, 6, 5)
 	// Initializing Elevator 1 of Column 2
 	Battery1.ColumnList[1].ElevatorList[0].Position = 20
@@ -477,18 +477,18 @@ func Scenario1() {
 	Battery1.ColumnList[1].ElevatorList[4].Position = 6
 	Battery1.ColumnList[1].ElevatorList[4].Direction = "DOWN"
 	Battery1.ColumnList[1].ElevatorList[4].StopList = append(Battery1.ColumnList[1].ElevatorList[4].StopList, 1)
-	fmt.Println("******************* ******************* *******************")
-	fmt.Println("******** User at floor 1. He goes UP to floor 20 ********")
-	fmt.Println("*********** Elevator 5 from Column 2 is expected **********")
-	fmt.Println("******************* ******************* *******************")
+
+	fmt.Println(" User at floor 1. He goes UP to floor 20 ")
+	fmt.Println(" Elevator 5 from Column 2 is expected ")
+
 	Battery1.AssignElevator(20)
 }
 
 // Scenario 2
 func Scenario2() {
-	fmt.Println("******************* ******************* *******************")
+
 	fmt.Println("*******************      Scenario 2     *******************")
-	fmt.Println("******************* ******************* *******************")
+
 	Battery2 := battery(4, 66, 6, 5)
 	// Initializing Elevator 1 of Column 3
 	Battery2.ColumnList[2].ElevatorList[0].Position = 1
@@ -510,18 +510,18 @@ func Scenario2() {
 	Battery2.ColumnList[2].ElevatorList[4].Position = 39
 	Battery2.ColumnList[2].ElevatorList[4].Direction = "DOWN"
 	Battery2.ColumnList[2].ElevatorList[4].StopList = append(Battery2.ColumnList[2].ElevatorList[4].StopList, 1)
-	fmt.Println("******************* ******************* *******************")
-	fmt.Println("******** User at floor 1. He goes UP to floor 36 ********")
-	fmt.Println("*********** Elevator 1 from Column 3 is expected **********")
-	fmt.Println("******************* ******************* *******************")
+
+	fmt.Println(" User at floor 1. He goes UP to floor 36 ")
+	fmt.Println(" Elevator 1 from Column 3 is expected ")
+
 	Battery2.AssignElevator(36)
 }
 
 // Scenario 3
 func Scenario3() {
-	fmt.Println("******************* ******************* *******************")
+
 	fmt.Println("*******************      Scenario 3     *******************")
-	fmt.Println("******************* ******************* *******************")
+
 	Battery3 := battery(4, 66, 6, 5)
 	// Initializing Elevator 1 of Column 3
 	Battery3.ColumnList[3].ElevatorList[0].Position = 58
@@ -544,18 +544,18 @@ func Scenario3() {
 	Battery3.ColumnList[3].ElevatorList[4].Direction = "DOWN"
 	Battery3.ColumnList[3].ElevatorList[4].StopList = append(Battery3.ColumnList[3].ElevatorList[4].StopList, 1)
 	// Battery3.AssignElevator();
-	fmt.Println("******************* ******************* *******************")
-	fmt.Println("******** User at floor 54. He goes DOWN to floor 1 ********")
-	fmt.Println("*********** Elevator 1 from Column 4 is expected **********")
-	fmt.Println("******************* ******************* *******************")
+
+	fmt.Println(" User at floor 54. He goes DOWN to floor 1 ")
+	fmt.Println(" Elevator 1 from Column 4 is expected ")
+
 	Battery3.RequestElevator(54)
 }
 
 // Scenario 4
 func Scenario4() {
-	fmt.Println("******************* ******************* *******************")
+
 	fmt.Println("*******************      Scenario 4     *******************")
-	fmt.Println("******************* ******************* *******************")
+
 	Battery4 := battery(4, 66, 6, 5)
 	// Initializing Elevator 1 of Column 4
 	Battery4.ColumnList[0].ElevatorList[0].Position = -4
@@ -578,9 +578,9 @@ func Scenario4() {
 	Battery4.ColumnList[0].ElevatorList[4].Direction = "DOWN"
 	Battery4.ColumnList[0].ElevatorList[4].StopList = append(Battery4.ColumnList[0].ElevatorList[4].StopList, -6)
 	// Battery3.AssignElevator();
-	fmt.Println("******************* ******************* *******************")
-	fmt.Println("********* User at floor -3. He goes UP to floor 1 *********")
-	fmt.Println("*********** Elevator 4 from Column 1 is expected **********")
-	fmt.Println("******************* ******************* *******************")
+
+	fmt.Println("User at floor -3. He goes UP to floor 1 ")
+	fmt.Println("Elevator 4 from Column 1 is expected ")
+
 	Battery4.RequestElevator(-3)
 }
